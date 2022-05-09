@@ -24,58 +24,32 @@ describe('Home', () => {
   });
 
   it('should add to likes when upvote button is clicked', () => {
-    let previousLikes = 0;
-    let currentLikes = 0;
-
-    //arrange
     cy.get('article')
       .first()
       .find('> :last')
-      .invoke('text')
       .then(($likes) => {
-        previousLikes = parseInt($likes.text);
+        const previousLikes = parseInt($likes.text());
+
+        cy.get('article').first().find('svg[id=up]').click().then(() => {
+          const currentLikes = parseInt($likes.text())
+          expect(currentLikes).to.above(previousLikes)
+        });
       });
-
-    //act
-    cy.get('article').first().find('svg:first').click();
-
-    //assert
-    cy.get('article')
-      .first()
-      .find('> :last')
-      .invoke('text')
-      .then(($likes) => {
-        currentLikes = parseInt($likes.text);
-      });
-
-    expect(currentLikes > previousLikes);
   });
 
   it('should subtract from likes when downvote button is clicked', () => {
-    let previousLikes = 0;
-    let currentLikes = 0;
-
-    //arrange
     cy.get('article')
       .first()
       .find('> :last')
-      .invoke('text')
       .then(($likes) => {
-        previousLikes = parseInt($likes);
+        const previousLikes = parseInt($likes.text());
+
+        cy.get('article').first().find('svg:last').click().then(() => {
+          const currentLikes = parseInt($likes.text())
+          expect(currentLikes).to.below(previousLikes)
+        });
       });
 
-    //act
-    cy.get('article').first().find('svg:first').click();
-
-    //assert
-    cy.get('article')
-      .first()
-      .find('> :last')
-      .invoke('text')
-      .then(($likes) => {
-        //expect(parseInt($likes)).to.below(previousLikes) //pq os dois estao iguais?
-      });
-    //expect(currentLikes).to.below(previousLikes); //why not workin
   });
 });
 
